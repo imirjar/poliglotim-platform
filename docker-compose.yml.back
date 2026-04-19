@@ -1,0 +1,77 @@
+services:
+  courses:
+    image: ghcr.io/imirjar/poliglotim-api:latest
+    container_name: poliglotim-api
+    restart: unless-stopped
+    environment:
+      PORT: "6060"
+      DB_CONN: ${DB_CONN}
+    expose:
+      - "6060"
+    networks:
+      - apisix-network
+
+  etcd:
+    image: bitnamilegacy/etcd:3.5.11
+    container_name: etcd
+    restart: unless-stopped
+    environment:
+      ETCD_ENABLE_V2: "true"
+      ALLOW_NONE_AUTHENTICATION: "yes"
+      ETCD_ADVERTISE_CLIENT_URLS: "http://etcd:2379"
+      ETCD_LISTEN_CLIENT_URLS: "http://0.0.0.0:2379"
+    ports:
+      - "2379:2379"
+    networks:
+      - apisix-network
+
+  apisix:
+    image: apache/apisix:latest
+    container_name: apisix
+    restart: unless-stopped
+    volumes:
+      - ./apisix_conf/config.yaml:/usr/local/apisix/conf/config.yaml:ro
+    ports:
+      - "9080:9080"
+      - "9180:9180"
+    depends_on:
+      - etcd
+      - courses
+    networks:
+      - apisix-network
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: keycloak
+      POSTGRES_USER: keycloak
+      POSTGRES_PASSWORD: password
+    ports:
+      - "5432:5432"
+    networks:
+      - apisix-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:latest
+    container_name: keycloak
+    command: start-dev
+    restart: unless-stopped
+    environment:
+      KEYCLOAK_ADMIN: admin
+      KEYCLOAK_ADMIN_PASSWORD: admin
+      KC_DB: postgres
+      KC_DB_URL: jdbc:postgresql://postgres:5432/keycloak
+      KC_DB_USERNAME: keycloak
+      KC_DB_PASSWORD: password
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      - apisix-network
+
+networks:
+  apisix-network:
+    driver: bridge
