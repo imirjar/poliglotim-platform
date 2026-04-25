@@ -46,12 +46,16 @@ services:
     image: quay.io/keycloak/keycloak:26.6.1
     container_name: keycloak
     restart: unless-stopped
-    command: start-dev
+    command:
+      - start-dev
+      - --import-realm
     environment:
-      KC_BOOTSTRAP_ADMIN_USERNAME: admin
-      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME}
+      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
     ports:
       - "8080:8080"
+    volumes:
+      - ./keycloak/import:/opt/keycloak/data/import
     networks:
       - apisix-network
 
