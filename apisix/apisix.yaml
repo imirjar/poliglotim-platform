@@ -1,0 +1,26 @@
+routes:
+  - id: courses-route
+    uri: /courses
+    upstream:
+      pass_host: node
+      nodes:
+        "courses:6060": 1
+      type: roundrobin
+
+  - id: chapters-route
+    uri: /chapters
+    upstream:
+      pass_host: node
+      nodes:
+        "courses:6060": 1
+      type: roundrobin
+
+  - id: lessons-route
+    uri: /lessons
+    upstream:
+      pass_host: node
+      nodes:
+        "courses:6060": 1
+      type: roundrobin
+
+#END

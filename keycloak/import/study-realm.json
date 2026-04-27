@@ -49,6 +49,30 @@
       "attributes": {
         "post.logout.redirect.uris": "http://localhost:3000/*"
       }
+    },
+    {
+      "clientId": "apisix",
+      "name": "APISIX Gateway",
+      "enabled": true,
+      "protocol": "openid-connect",
+
+      "publicClient": false,
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": true,
+      "directAccessGrantsEnabled": true,
+
+      "secret": "apisix-secret",
+
+      "redirectUris": [
+        "http://localhost:9080/*"
+      ],
+      "webOrigins": [
+        "http://localhost:9080"
+      ],
+
+      "attributes": {
+        "post.logout.redirect.uris": "http://localhost:9080/*"
+      }
     }
   ],
 

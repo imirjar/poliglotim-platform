@@ -48,7 +48,7 @@ curl http://127.0.0.1:9180/apisix/admin/routes/keycloak-proxy \
 ### 2. Создать route в APISIX для сервиса `courses`
 
 ```bash
-ccurl http://127.0.0.1:9180/apisix/admin/routes/study \
+curl http://127.0.0.1:9180/apisix/admin/routes/study \
   -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
   -X PUT \
   -d '
@@ -71,4 +71,32 @@ ccurl http://127.0.0.1:9180/apisix/admin/routes/study \
     }
   }
 }'
+```
+
+
+
+# TEST 
+```bash
+curl "http://127.0.0.1:9180/apisix/admin/routes/courses-auth" \
+  -H "X-API-KEY: edd1c9f034335f136f87ad84b625c8f1" \
+  -d '{
+    "uri": "/courses/*",
+    "plugins": {
+      "openid-connect": {
+        "client_id": "apisix",
+        "client_secret": "apisix-secret",
+        "discovery": "http://keycloak:8080/realms/study/.well-known/openid-configuration",
+        "scope": "openid profile email",
+        "bearer_only": false,
+        "redirect_uri": "http://localhost:9080/courses/redirect",
+        "ssl_verify": false
+      }
+    },
+    "upstream": {
+      "type": "roundrobin",
+      "nodes": {
+        "courses:6060": 1
+      }
+    }
+  }'
 ```
