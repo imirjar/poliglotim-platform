@@ -7,20 +7,42 @@ routes:
         "courses:6060": 1
       type: roundrobin
 
-  - id: chapters-route
-    uri: /chapters
+  - id: keycloak-realms
+    uri: /realms/*
     upstream:
-      pass_host: node
       nodes:
-        "courses:6060": 1
+        "keycloak:8080": 1
       type: roundrobin
 
-  - id: lessons-route
-    uri: /lessons
+  - id: keycloak-resources
+    uri: /resources/*
+    upstream:
+      nodes:
+        "keycloak:8080": 1
+      type: roundrobin
+
+  - id: protected-courses-content
+    uris:
+      - /chapters
+      - /chapters/*
+      - /lessons
+      - /lessons/*
     upstream:
       pass_host: node
       nodes:
         "courses:6060": 1
       type: roundrobin
+    plugins:
+      openid-connect:
+        client_id: apisix
+        client_secret: apisix-secret
+        discovery: http://127.0.0.1:9080/realms/study/.well-known/openid-configuration
+        bearer_only: false
+        realm: "study"
+        redirect_uri: http://localhost:9080/chapters/callback
+        scope: openid profile email
+        session:
+          secret: "9f3a8c2b1e7d4f6a9c0b2d8e4f1a3c5d9e7f6a4b2c1d8e3f0a9b6c7d5e2f1a3"
+        unauth_action: "auth"
 
 #END
