@@ -7,7 +7,7 @@ services:
       - ./apisix/apisix.yaml:/usr/local/apisix/conf/apisix.yaml:ro
     ports:
       - "9080:9080/tcp"
-      - "9443:9443/tcp"
+      - "443:9443/tcp"
     networks:
       - apisix-network
     depends_on:

@@ -40,14 +40,15 @@
       "implicitFlowEnabled": false,
 
       "redirectUris": [
-        "http://localhost:3000/*"
+        "http://localhost:3000/*",
+        "com.poliglotim.app:/oauthredirect"
       ],
       "webOrigins": [
         "http://localhost:3000"
       ],
 
       "attributes": {
-        "post.logout.redirect.uris": "http://localhost:3000/*"
+        "post.logout.redirect.uris": "http://localhost:3000/*##com.poliglotim.app:/oauthredirect"
       }
     },
     {
@@ -57,22 +58,14 @@
       "protocol": "openid-connect",
 
       "publicClient": false,
-      "serviceAccountsEnabled": true,
-      "standardFlowEnabled": true,
-      "directAccessGrantsEnabled": true,
+      "bearerOnly": true,
 
-      "secret": "apisix-secret",
+      "serviceAccountsEnabled": false,
+      "standardFlowEnabled": false,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": false,
 
-      "redirectUris": [
-        "http://localhost:9080/*"
-      ],
-      "webOrigins": [
-        "http://localhost:9080"
-      ],
-
-      "attributes": {
-        "post.logout.redirect.uris": "http://localhost:9080/*"
-      }
+      "secret": "apisix-secret"
     }
   ],
 

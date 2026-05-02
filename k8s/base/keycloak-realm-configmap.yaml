@@ -1,0 +1,96 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: keycloak-realm
+  namespace: poliglotim
+data:
+  study-realm.json: |
+    {
+      "realm": "study",
+      "enabled": true,
+      "registrationAllowed": true,
+      "loginWithEmailAllowed": true,
+      "duplicateEmailsAllowed": false,
+      "resetPasswordAllowed": true,
+      "editUsernameAllowed": false,
+      "verifyEmail": false,
+      "rememberMe": true,
+      "roles": {
+        "realm": [
+          { "name": "student", "description": "Student role" },
+          { "name": "teacher", "description": "Teacher role" },
+          { "name": "admin", "description": "Administrator role" }
+        ]
+      },
+      "clients": [
+        {
+          "clientId": "frontend",
+          "name": "Frontend",
+          "enabled": true,
+          "protocol": "openid-connect",
+          "publicClient": true,
+          "directAccessGrantsEnabled": true,
+          "standardFlowEnabled": true,
+          "implicitFlowEnabled": false,
+          "redirectUris": ["https://app.example.com/*", "com.poliglotim.app:/oauthredirect"],
+          "webOrigins": ["https://app.example.com"],
+          "attributes": {
+            "post.logout.redirect.uris": "https://app.example.com/*##com.poliglotim.app:/oauthredirect"
+          }
+        },
+        {
+          "clientId": "apisix",
+          "name": "APISIX Gateway",
+          "enabled": true,
+          "protocol": "openid-connect",
+          "publicClient": false,
+          "serviceAccountsEnabled": true,
+          "standardFlowEnabled": true,
+          "directAccessGrantsEnabled": true,
+          "secret": "apisix-secret",
+          "redirectUris": ["https://api.example.com/*"],
+          "webOrigins": ["https://api.example.com"],
+          "attributes": {
+            "post.logout.redirect.uris": "https://api.example.com/*"
+          }
+        }
+      ],
+      "users": [
+        {
+          "username": "student1",
+          "enabled": true,
+          "emailVerified": true,
+          "firstName": "Student",
+          "lastName": "One",
+          "email": "student1@example.com",
+          "credentials": [
+            { "type": "password", "value": "student123", "temporary": false }
+          ],
+          "realmRoles": ["student"]
+        },
+        {
+          "username": "teacher1",
+          "enabled": true,
+          "emailVerified": true,
+          "firstName": "Teacher",
+          "lastName": "One",
+          "email": "teacher1@example.com",
+          "credentials": [
+            { "type": "password", "value": "teacher123", "temporary": false }
+          ],
+          "realmRoles": ["teacher"]
+        },
+        {
+          "username": "admin1",
+          "enabled": true,
+          "emailVerified": true,
+          "firstName": "Admin",
+          "lastName": "One",
+          "email": "admin1@example.com",
+          "credentials": [
+            { "type": "password", "value": "admin123", "temporary": false }
+          ],
+          "realmRoles": ["admin"]
+        }
+      ]
+    }
