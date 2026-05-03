@@ -1,4 +1,13 @@
 services:
+  app:
+    image: ghcr.io/imirjar/poliglotim-app:latest
+    restart: always
+    ports:
+      - "80:80"
+    depends_on:
+      - apisix
+    networks:
+      - apisix-network
   apisix:
     image: apache/apisix:latest
     restart: always
@@ -20,11 +29,14 @@ services:
     restart: unless-stopped
     environment:
       PORT: "6060"
-      DB_CONN: ${DB_CONN}
+      DB_CONN: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
     expose:
       - "6060"
     networks:
       - apisix-network
+    depends_on:
+      postgres:
+        condition: service_healthy
 
   keycloak:
     image: quay.io/keycloak/keycloak:26.6.1
@@ -44,18 +56,26 @@ services:
     networks:
       - apisix-network
 
-  app:
-    image: ghcr.io/imirjar/poliglotim-app:latest
-    restart: always
+  postgres:
+    image: postgres:17
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    volumes:
+      - ./postgres/dump.sql:/docker-entrypoint-initdb.d/dump.sql
     ports:
-      - "80:80"
+      - "5432:5432"
     networks:
       - apisix-network
 
 networks:
   apisix-network:
     driver: bridge
-
-volumes:
-  etcd_data:
-    driver: local

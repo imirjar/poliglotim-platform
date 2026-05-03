@@ -1,6 +1,4 @@
-# APISIX API-GATEWAY
-
-Language courses platform
+# Language courses platform
 
 ## Consists of:
 1) Golang based api
@@ -14,7 +12,7 @@ Language courses platform
 docker-compose up -d 
 ```
 
-## Retart command in case of updates:
+## Restart command in case of updates:
 ```bash
 docker compose down -v                                  
 docker compose up -d --build
