@@ -44,6 +44,14 @@ services:
     networks:
       - apisix-network
 
+  app:
+    image: ghcr.io/imirjar/poliglotim-app:latest
+    restart: always
+    ports:
+      - "80:80"
+    networks:
+      - apisix-network
+
 networks:
   apisix-network:
     driver: bridge
