@@ -40,15 +40,19 @@
       "implicitFlowEnabled": false,
 
       "redirectUris": [
-        "http://localhost:3000/*",
+        "http://localhost/*",
+        "http://localhost:80/*",
         "com.poliglotim.app:/oauthredirect"
       ],
+      
       "webOrigins": [
-        "http://localhost:3000"
+        "http://localhost",
+        "http://localhost:80",
+        "com.poliglotim.app"
       ],
 
       "attributes": {
-        "post.logout.redirect.uris": "http://localhost:3000/*##com.poliglotim.app:/oauthredirect"
+        "post.logout.redirect.uris": "http://localhost/* http://localhost:80/* com.poliglotim.app:/oauthredirect"
       }
     },
     {
