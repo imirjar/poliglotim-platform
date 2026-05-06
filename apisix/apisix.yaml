@@ -1,73 +1,50 @@
-routes:
-  - id: keycloak-realms
-    uri: /realms/*
-    upstream:
-      nodes:
-        "keycloak:8080": 1
-      type: roundrobin
+plugin_configs:
+  - id: protected
     plugins:
-      cors:
-        allow_origins: "http://localhost,http://localhost:80,com.poliglotim.app://"
-        allow_methods: "GET,POST,PUT,DELETE,OPTIONS"
-        allow_headers: "*"
-        expose_headers: "*"
-        max_age: 3600
-
-  - id: keycloak-resources
-    uri: /resources/*
-    upstream:
-      nodes:
-        "keycloak:8080": 1
-      type: roundrobin
-    plugins:
-      cors:
-        allow_origins: "http://localhost,http://localhost:80,com.poliglotim.app://"
-        allow_methods: "GET,POST,PUT,DELETE,OPTIONS"
-        allow_headers: "*"
-        expose_headers: "*"
-        max_age: 3600
-
-  - id: courses-route
-    uri: /courses
-    upstream:
-      nodes:
-        "courses:6060": 1
-      type: roundrobin
-    plugins:
-      cors:
-        allow_origins: "http://localhost,http://localhost:80,com.poliglotim.app://"
-        allow_methods: "GET,POST,PUT,DELETE,OPTIONS"
-        allow_headers: "*"
-        expose_headers: "*"
-        max_age: 3600
-
-  - id: protected-courses-content
-    uris:
-      - /chapters
-      - /chapters/*
-      - /lessons
-      - /lessons/*
-    upstream:
-      nodes:
-        "courses:6060": 1
-      type: roundrobin
-    plugins:
-      cors:
-        allow_origins: "http://localhost,http://localhost:80,com.poliglotim.app://"
-        allow_methods: "GET,POST,PUT,DELETE,OPTIONS"
-        allow_headers: "*"
-        expose_headers: "*"
-        max_age: 3600
-
       openid-connect:
         client_id: apisix
         client_secret: apisix-secret
-        discovery: http://keycloak:8080/realms/study/.well-known/openid-configuration
-        bearer_only: true
+        discovery: "http://keycloak:8080/realms/study/.well-known/openid-configuration"
+        bearer_only: false  # чтобы работал редирект
         realm: "study"
         scope: "openid profile email"
-        unauth_action: "deny"
-        # Дополнительные полезные параметры:
-        ssl_verify: false  # Только для разработки
-        timeout: 10
-        set_access_token_header: true
+        redirect_uri: "http://localhost:9080/protected/callback"
+        logout_path: "/protected/logout"
+        post_logout_redirect_uri: "http://localhost:9080/"
+        session:
+          secret: "ваш-очень-длинный-и-случайный-секрет-32+символов"
+        ssl_verify: false  # для http://keycloak
+
+upstreams:
+  - id: study
+    type: roundrobin
+    nodes:
+      "courses:6060": 1
+  - id: keycloak
+    type: roundrobin
+    nodes:
+      "keycloak:8080": 1
+
+routes:
+  - id: keycloak-realms
+    uri: "/realms*"
+    upstream_id: keycloak
+  - id: keycloak-resources
+    uri: "/resources*"
+    upstream_id: keycloak
+  - id: courses 
+    uri: "/courses*"
+    upstream_id: study
+  - id: protected-callback
+    uri: "/protected*"
+    plugin_config_id: protected
+    upstream_id: study
+  - id: chapters
+    uri: "/chapters*"
+    plugin_config_id: protected
+    upstream_id: study
+  - id: lessons  
+    uri: "/lessons*"
+    plugin_config_id: protected
+    upstream_id: study
+#END

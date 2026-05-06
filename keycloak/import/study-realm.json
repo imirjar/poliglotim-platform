@@ -62,14 +62,26 @@
       "protocol": "openid-connect",
 
       "publicClient": false,
-      "bearerOnly": true,
+      "bearerOnly": false,
 
       "serviceAccountsEnabled": false,
-      "standardFlowEnabled": false,
+      "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
 
-      "secret": "apisix-secret"
+      "secret": "apisix-secret",
+
+      "redirectUris": [
+        "http://localhost:9080/protected/callback"
+      ],
+
+      "webOrigins": [
+        "http://localhost:9080"
+      ],
+
+      "attributes": {
+        "post.logout.redirect.uris": "http://localhost:9080/*"
+      }
     }
   ],
 
