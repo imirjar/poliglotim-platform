@@ -1,9 +1,12 @@
 services:
   app:
-    image: ghcr.io/imirjar/poliglotim-app:latest
+    build:
+      context: /Users/artemzadorov/development/flutter/examples/poliglotim
+      dockerfile: Dockerfile
+    image: poliglotim-app:local
     restart: always
     ports:
-      - "80:80"
+      - "3000:80"
     depends_on:
       - apisix
     networks:
@@ -15,7 +18,7 @@ services:
       - ./apisix/config.yaml:/usr/local/apisix/conf/config.yaml:ro
       - ./apisix/apisix.yaml:/usr/local/apisix/conf/apisix.yaml:ro
     ports:
-      - "9080:9080/tcp"
+      - "80:9080/tcp"
       - "443:9443/tcp"
     networks:
       - apisix-network
@@ -30,8 +33,10 @@ services:
     environment:
       PORT: "6060"
       DB_CONN: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-    expose:
-      - "6060"
+    # expose:
+    #   - "6060"
+    ports:
+      - "6060:6060"
     networks:
       - apisix-network
     depends_on:
@@ -49,7 +54,7 @@ services:
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KC_PROXY_HEADERS: xforwarded
-      KC_HOSTNAME: http://localhost:9080
+      KC_HOSTNAME: http://auth.dev.plyglo.com
     ports:
       - "8080:8080"
     volumes:

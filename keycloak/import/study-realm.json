@@ -22,7 +22,7 @@
       },
       {
         "name": "admin",
-        "description": "Administrator role"
+        "description": "Application administrator role"
       }
     ]
   },
@@ -35,24 +35,21 @@
       "protocol": "openid-connect",
 
       "publicClient": true,
-      "directAccessGrantsEnabled": true,
+      "directAccessGrantsEnabled": false,
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
 
       "redirectUris": [
-        "http://localhost/*",
-        "http://localhost:80/*",
-        "com.poliglotim.app:/oauthredirect"
+        "http://app.dev.plyglo.com/*",
+        "com.poliglotim.app:/callback"
       ],
-      
+
       "webOrigins": [
-        "http://localhost",
-        "http://localhost:80",
-        "com.poliglotim.app"
+        "http://app.dev.plyglo.com"
       ],
 
       "attributes": {
-        "post.logout.redirect.uris": "http://localhost/* http://localhost:80/* com.poliglotim.app:/oauthredirect"
+        "post.logout.redirect.uris": "http://app.dev.plyglo.com/* com.poliglotim.app:/callback"
       }
     },
     {
@@ -64,24 +61,12 @@
       "publicClient": false,
       "bearerOnly": false,
 
-      "serviceAccountsEnabled": false,
-      "standardFlowEnabled": true,
+      "serviceAccountsEnabled": true,
+      "standardFlowEnabled": false,
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": false,
 
-      "secret": "apisix-secret",
-
-      "redirectUris": [
-        "http://localhost:9080/protected/callback"
-      ],
-
-      "webOrigins": [
-        "http://localhost:9080"
-      ],
-
-      "attributes": {
-        "post.logout.redirect.uris": "http://localhost:9080/*"
-      }
+      "secret": "apisix-secret"
     }
   ],
 
