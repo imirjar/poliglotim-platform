@@ -31,6 +31,10 @@ upstreams:
     type: roundrobin
     nodes:
       "app:80": 1
+  - id: site
+    type: roundrobin
+    nodes:
+      "site:80": 1
 
 routes:
   - id: app
@@ -85,4 +89,8 @@ routes:
     host: "api.dev.plyglo.com"
     plugin_config_id: protected
     upstream_id: api
+  - id: site
+    uri: "/*"
+    host: "dev.plyglo.com"
+    upstream_id: site
 #END

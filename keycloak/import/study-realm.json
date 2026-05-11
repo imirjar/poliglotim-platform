@@ -1,6 +1,7 @@
 {
   "realm": "study",
   "enabled": true,
+  "loginTheme": "poliglotim",
 
   "registrationAllowed": true,
   "loginWithEmailAllowed": true,
