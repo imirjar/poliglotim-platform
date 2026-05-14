@@ -13,6 +13,8 @@
 127.0.0.1       app.dev.plyglo.com
 127.0.0.1       api.dev.plyglo.com
 127.0.0.1       auth.dev.plyglo.com
+255.255.255.255	broadcasthost
+::1             localhost
 ```
 
 ## Start command:
