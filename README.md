@@ -4,7 +4,7 @@
 1) Golang based api
 2) Flutter web client
 3) Keycloak SSO 
-4) APISIX API Gateway with AOUTH 2.0 logic
+4) APISIX API Gateway with OAUTH 2.0 logic
 
 ## Edit DNS
 #### Add to your /etc/hosts 

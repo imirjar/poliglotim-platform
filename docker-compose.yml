@@ -1,13 +1,22 @@
 services:
   app:
-    image: ghcr.io/imirjar/poliglotim-app:v0.4.1
-    # build:
-    #   context: /Users/artemzadorov/development/flutter/examples/poliglotim
-    #   dockerfile: Dockerfile
-    # image: poliglotim-app:local
-    restart: always
+    # image: ghcr.io/imirjar/poliglotim-app:latest
+    build:
+      context: /Users/artemzadorov/development/flutter/examples/poliglotim
+      dockerfile: Dockerfile
+    image: poliglotim-app:local
+    # restart: always
     ports:
       - "3000:80"
+    environment:
+      #API
+      - API_BASE_URL=${API_BASE_URL}
+      - API_UPSTREAM_PATH=${API_UPSTREAM_PATH:-}
+      #KEYCLOAK
+      - AUTH_BASE_URL=${AUTH_BASE_URL}
+      - AUTH_UPSTREAM_PATH=${AUTH_UPSTREAM_PATH}
+      - KEYCLOAK_REALM=${KEYCLOAK_REALM}
+      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
     depends_on:
       - apisix
     networks:
@@ -55,7 +64,7 @@ services:
         condition: service_healthy
 
   keycloak:
-    image: quay.io/keycloak/keycloak:26.6.1
+    image: quay.io/keycloak/keycloak:latest
     container_name: keycloak
     restart: unless-stopped
     command:
