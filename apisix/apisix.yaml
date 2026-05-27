@@ -2,7 +2,7 @@ plugin_configs:
   - id: protected
     plugins:
       cors:
-        allow_origins: "http://app.dev.plyglo.com"
+        allow_origins: "http://app.dev.plyglo.com,https://app.test.plyglo.com,https://app.plyglo.com"
         allow_methods: "GET,POST,PUT,PATCH,DELETE,OPTIONS"
         allow_headers: "Authorization,Content-Type,Accept,Origin,Referer,User-Agent"
         expose_headers: "*"
@@ -39,58 +39,82 @@ upstreams:
 routes:
   - id: app
     uri: "/*"
-    host: "app.dev.plyglo.com"
+    hosts:
+      - "app.dev.plyglo.com"
+      - "app.test.plyglo.com"
+      - "app.plyglo.com"
     upstream_id: app
   - id: keycloak-realms
     uri: "/realms*"
-    host: "auth.dev.plyglo.com"
+    hosts:
+      - "auth.dev.plyglo.com"
+      - "auth.test.plyglo.com"
+      - "auth.plyglo.com"
     upstream_id: keycloak
     plugins:
       cors:
-        allow_origins: "http://app.dev.plyglo.com"
+        allow_origins: "http://app.dev.plyglo.com,https://app.test.plyglo.com,https://app.plyglo.com"
         allow_methods: "GET,POST,PUT,PATCH,DELETE,OPTIONS"
         allow_headers: "Authorization,Content-Type,Accept,Origin,Referer,User-Agent"
         expose_headers: "*"
         max_age: 3600
   - id: keycloak-resources
     uri: "/resources*"
-    host: "auth.dev.plyglo.com"
+    hosts:
+      - "auth.dev.plyglo.com"
+      - "auth.test.plyglo.com"
+      - "auth.plyglo.com"
     upstream_id: keycloak
     plugins:
       cors:
-        allow_origins: "http://app.dev.plyglo.com"
+        allow_origins: "http://app.dev.plyglo.com,https://app.test.plyglo.com,https://app.plyglo.com"
         allow_methods: "GET,POST,PUT,PATCH,DELETE,OPTIONS"
         allow_headers: "Authorization,Content-Type,Accept,Origin,Referer,User-Agent"
         expose_headers: "*"
         max_age: 3600
   - id: courses 
     uri: "/courses*"
-    host: "api.dev.plyglo.com"
+    hosts:
+      - "api.dev.plyglo.com"
+      - "api.test.plyglo.com"
+      - "api.plyglo.com"
     upstream_id: api
     plugins:
       cors:
-        allow_origins: "http://app.dev.plyglo.com"
+        allow_origins: "http://app.dev.plyglo.com,https://app.test.plyglo.com,https://app.plyglo.com"
         allow_methods: "GET,POST,PUT,PATCH,DELETE,OPTIONS"
         allow_headers: "Authorization,Content-Type,Accept,Origin,Referer,User-Agent"
         expose_headers: "*"
         max_age: 3600
   - id: protected-callback
     uri: "/protected*"
-    host: "api.dev.plyglo.com"
+    hosts:
+      - "api.dev.plyglo.com"
+      - "api.test.plyglo.com"
+      - "api.plyglo.com"
     plugin_config_id: protected
     upstream_id: api
   - id: chapters
     uri: "/chapters*"
-    host: "api.dev.plyglo.com"
+    hosts:
+      - "api.dev.plyglo.com"
+      - "api.test.plyglo.com"
+      - "api.plyglo.com"
     plugin_config_id: protected
     upstream_id: api
   - id: lessons  
     uri: "/lessons*"
-    host: "api.dev.plyglo.com"
+    hosts:
+      - "api.dev.plyglo.com"
+      - "api.test.plyglo.com"
+      - "api.plyglo.com"
     plugin_config_id: protected
     upstream_id: api
   - id: site
     uri: "/*"
-    host: "dev.plyglo.com"
+    hosts:
+      - "dev.plyglo.com"
+      - "test.plyglo.com"
+      - "plyglo.com"
     upstream_id: site
 #END

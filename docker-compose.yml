@@ -74,7 +74,7 @@ services:
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KC_PROXY_HEADERS: xforwarded
-      KC_HOSTNAME: http://auth.dev.plyglo.com
+      KC_HOSTNAME: ${AUTH_ORIGIN}
     ports:
       - "8080:8080"
     volumes:

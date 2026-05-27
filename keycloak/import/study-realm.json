@@ -42,15 +42,19 @@
 
       "redirectUris": [
         "http://app.dev.plyglo.com/*",
+        "https://app.test.plyglo.com/*",
+        "https://app.plyglo.com/*",
         "com.poliglotim.app:/callback"
       ],
 
       "webOrigins": [
-        "http://app.dev.plyglo.com"
+        "http://app.dev.plyglo.com",
+        "https://app.test.plyglo.com",
+        "https://app.plyglo.com"
       ],
 
       "attributes": {
-        "post.logout.redirect.uris": "http://app.dev.plyglo.com/* com.poliglotim.app:/callback"
+        "post.logout.redirect.uris": "http://app.dev.plyglo.com/* https://app.test.plyglo.com/* https://app.plyglo.com/* com.poliglotim.app:/callback"
       }
     },
     {

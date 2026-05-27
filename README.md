@@ -7,7 +7,7 @@
 4) APISIX API Gateway with OAUTH 2.0 logic
 
 ## Edit DNS
-#### Add to your /etc/hosts 
+#### For local development - add this to your /etc/hosts 
 ```bash
 127.0.0.1       dev.plyglo.com
 127.0.0.1       app.dev.plyglo.com
