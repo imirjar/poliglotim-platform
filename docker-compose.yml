@@ -1,10 +1,10 @@
 services:
   app:
-    # image: ghcr.io/imirjar/poliglotim-app:latest
-    build:
-      context: /Users/artemzadorov/development/flutter/examples/poliglotim
-      dockerfile: Dockerfile
-    image: poliglotim-app:local
+    image: ghcr.io/imirjar/poliglotim-app:latest
+    # build:
+    #   context: /Users/artemzadorov/development/flutter/examples/poliglotim
+    #   dockerfile: Dockerfile
+    # image: poliglotim-app:local
     # restart: always
     ports:
       - "3000:80"
