@@ -41,37 +41,17 @@
       "implicitFlowEnabled": false,
 
       "redirectUris": [
-        "http://app.dev.plyglo.com/*",
-        "https://app.test.plyglo.com/*",
         "https://app.plyglo.com/*",
         "com.poliglotim.app:/callback"
       ],
 
       "webOrigins": [
-        "http://app.dev.plyglo.com",
-        "https://app.test.plyglo.com",
         "https://app.plyglo.com"
       ],
 
       "attributes": {
-        "post.logout.redirect.uris": "http://app.dev.plyglo.com/* https://app.test.plyglo.com/* https://app.plyglo.com/* com.poliglotim.app:/callback"
+        "post.logout.redirect.uris": "https://app.plyglo.com/* com.poliglotim.app:/callback"
       }
-    },
-    {
-      "clientId": "apisix",
-      "name": "APISIX Gateway",
-      "enabled": true,
-      "protocol": "openid-connect",
-
-      "publicClient": false,
-      "bearerOnly": false,
-
-      "serviceAccountsEnabled": true,
-      "standardFlowEnabled": false,
-      "implicitFlowEnabled": false,
-      "directAccessGrantsEnabled": false,
-
-      "secret": "apisix-secret"
     }
   ],
 

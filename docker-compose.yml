@@ -4,8 +4,8 @@ services:
     container_name: traefik
     restart: always
     command:
-      - --providers.docker=true
-      - --providers.docker.exposedbydefault=false
+      - --providers.file.filename=/etc/traefik/dynamic.yml
+      - --providers.file.watch=true
       - --entrypoints.web.address=:80
       - --entrypoints.websecure.address=:443
       - --certificatesresolvers.letsencrypt.acme.email=${LETSENCRYPT_EMAIL}
@@ -16,25 +16,17 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
       - ./traefik/letsencrypt:/letsencrypt
     networks:
       - platform-network
 
   app:
     image: ghcr.io/imirjar/poliglotim-app:latest
-    # build:
-    #   context: /Users/artemzadorov/development/flutter/examples/poliglotim
-    #   dockerfile: Dockerfile
-    # image: poliglotim-app:local
-    # restart: always
-    ports:
-      - "3000:80"
+    restart: always
     environment:
-      #API
       - API_BASE_URL=${API_BASE_URL}
       - API_UPSTREAM_PATH=${API_UPSTREAM_PATH:-}
-      #KEYCLOAK
       - AUTH_BASE_URL=${AUTH_BASE_URL}
       - AUTH_UPSTREAM_PATH=${AUTH_UPSTREAM_PATH}
       - KEYCLOAK_REALM=${KEYCLOAK_REALM}
@@ -44,34 +36,12 @@ services:
       - keycloak
     networks:
       - platform-network
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.app-web.rule=Host(`app.dev.plyglo.com`) || Host(`app.test.plyglo.com`) || Host(`app.plyglo.com`)
-      - traefik.http.routers.app-web.entrypoints=web
-      - traefik.http.routers.app-web.service=app
-      - traefik.http.routers.app-secure.rule=Host(`app.plyglo.com`)
-      - traefik.http.routers.app-secure.entrypoints=websecure
-      - traefik.http.routers.app-secure.tls.certresolver=letsencrypt
-      - traefik.http.routers.app-secure.service=app
-      - traefik.http.services.app.loadbalancer.server.port=80
 
   site:
     image: ghcr.io/imirjar/poliglotim-site:latest
     restart: always
-    ports:
-      - "8000:80"
     networks:
       - platform-network
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.site-web.rule=Host(`dev.plyglo.com`) || Host(`test.plyglo.com`) || Host(`plyglo.com`)
-      - traefik.http.routers.site-web.entrypoints=web
-      - traefik.http.routers.site-web.service=site
-      - traefik.http.routers.site-secure.rule=Host(`plyglo.com`)
-      - traefik.http.routers.site-secure.entrypoints=websecure
-      - traefik.http.routers.site-secure.tls.certresolver=letsencrypt
-      - traefik.http.routers.site-secure.service=site
-      - traefik.http.services.site.loadbalancer.server.port=80
 
   courses:
     image: ghcr.io/imirjar/poliglotim-api:latest
@@ -80,25 +50,11 @@ services:
     environment:
       PORT: "6060"
       DB_CONN: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
-    # expose:
-    #   - "6060"
-    ports:
-      - "6060:6060"
     networks:
       - platform-network
     depends_on:
       postgres:
         condition: service_healthy
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.api-web.rule=Host(`api.dev.plyglo.com`) || Host(`api.test.plyglo.com`) || Host(`api.plyglo.com`)
-      - traefik.http.routers.api-web.entrypoints=web
-      - traefik.http.routers.api-web.service=api
-      - traefik.http.routers.api-secure.rule=Host(`api.plyglo.com`)
-      - traefik.http.routers.api-secure.entrypoints=websecure
-      - traefik.http.routers.api-secure.tls.certresolver=letsencrypt
-      - traefik.http.routers.api-secure.service=api
-      - traefik.http.services.api.loadbalancer.server.port=6060
 
   keycloak:
     image: quay.io/keycloak/keycloak:latest
@@ -112,23 +68,11 @@ services:
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KC_PROXY_HEADERS: xforwarded
       KC_HOSTNAME: ${AUTH_ORIGIN}
-    ports:
-      - "8080:8080"
     volumes:
       - ./keycloak/import:/opt/keycloak/data/import
       - ./keycloak/themes:/opt/keycloak/themes:ro
     networks:
       - platform-network
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.auth-web.rule=Host(`auth.dev.plyglo.com`) || Host(`auth.test.plyglo.com`) || Host(`auth.plyglo.com`)
-      - traefik.http.routers.auth-web.entrypoints=web
-      - traefik.http.routers.auth-web.service=auth
-      - traefik.http.routers.auth-secure.rule=Host(`auth.plyglo.com`)
-      - traefik.http.routers.auth-secure.entrypoints=websecure
-      - traefik.http.routers.auth-secure.tls.certresolver=letsencrypt
-      - traefik.http.routers.auth-secure.service=auth
-      - traefik.http.services.auth.loadbalancer.server.port=8080
 
   postgres:
     image: postgres:17
@@ -145,8 +89,6 @@ services:
       retries: 10
     volumes:
       - ${S3_SQL_DUMP}:/docker-entrypoint-initdb.d/dump.sql
-    ports:
-      - "5432:5432"
     networks:
       - platform-network
 

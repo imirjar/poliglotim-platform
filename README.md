@@ -1,57 +1,43 @@
-# Language courses platform
+# Language Courses Platform
 
-## Consists of:
-1) Golang based api
-2) Flutter web client
-3) Keycloak SSO 
-4) Traefik edge router with Let's Encrypt support
+## Services
 
-## Edit DNS
-#### For local development - add this to your /etc/hosts 
-```bash
-127.0.0.1       dev.plyglo.com
-127.0.0.1       app.dev.plyglo.com
-127.0.0.1       api.dev.plyglo.com
-127.0.0.1       auth.dev.plyglo.com
-255.255.255.255	broadcasthost
-::1             localhost
+1. Traefik edge router with Let's Encrypt
+2. Flutter web app
+3. Public site
+4. Courses API
+5. Keycloak SSO
+6. Postgres
+
+## Domains
+
+Point these DNS records to the machine running Traefik:
+
+```text
+plyglo.com
+app.plyglo.com
+api.plyglo.com
+auth.plyglo.com
 ```
 
-For `test.plyglo.com` or `plyglo.com`, point the same host groups to the
-machine running Traefik:
+Traefik routes are defined in `traefik/dynamic.yml`.
 
-```bash
-127.0.0.1       test.plyglo.com
-127.0.0.1       app.test.plyglo.com
-127.0.0.1       api.test.plyglo.com
-127.0.0.1       auth.test.plyglo.com
-
-127.0.0.1       plyglo.com
-127.0.0.1       app.plyglo.com
-127.0.0.1       api.plyglo.com
-127.0.0.1       auth.plyglo.com
-```
-
-Switch the active Keycloak public URL and Let's Encrypt email through `.env`:
+## Environment
 
 ```env
-APP_ORIGIN=http://app.dev.plyglo.com
-AUTH_ORIGIN=http://auth.dev.plyglo.com
+APP_ORIGIN=https://app.plyglo.com
+AUTH_ORIGIN=https://auth.plyglo.com
 LETSENCRYPT_EMAIL=admin@plyglo.com
 ```
 
-Traefik serves HTTP on port `80` and HTTPS on port `443`. HTTP routes accept
-dev, test, and prod hostnames. Let's Encrypt is enabled for prod hostnames by
-default, because certificate issuance requires public DNS records that point to
-this machine.
+## Start
 
-## Start command:
 ```bash
 docker compose up -d --remove-orphans
 ```
 
-## Restart command in case of updates:
+## Restart
+
 ```bash
-docker compose down -v                                  
-docker compose up -d --build
+docker compose up -d
 ```
