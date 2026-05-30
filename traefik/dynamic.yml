@@ -9,7 +9,7 @@ http:
       service: site
 
     app:
-      rule: Host(`app.plyglo.com`)
+      rule: Host(`study.plyglo.com`)
       entryPoints:
         - websecure
       tls:

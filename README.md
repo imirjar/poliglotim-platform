@@ -15,7 +15,7 @@ Point these DNS records to the machine running Traefik:
 
 ```text
 plyglo.com
-app.plyglo.com
+study.plyglo.com
 api.plyglo.com
 auth.plyglo.com
 ```
@@ -25,7 +25,7 @@ Traefik routes are defined in `traefik/dynamic.yml`.
 ## Environment
 
 ```env
-APP_ORIGIN=https://app.plyglo.com
+APP_ORIGIN=https://study.plyglo.com
 AUTH_ORIGIN=https://auth.plyglo.com
 LETSENCRYPT_EMAIL=admin@plyglo.com
 ```

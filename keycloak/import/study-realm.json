@@ -2,7 +2,6 @@
   "realm": "study",
   "enabled": true,
   "loginTheme": "poliglotim",
-
   "registrationAllowed": true,
   "loginWithEmailAllowed": true,
   "duplicateEmailsAllowed": false,
@@ -10,7 +9,6 @@
   "editUsernameAllowed": false,
   "verifyEmail": false,
   "rememberMe": true,
-
   "roles": {
     "realm": [
       {
@@ -27,34 +25,45 @@
       }
     ]
   },
-
   "clients": [
     {
-      "clientId": "frontend",
-      "name": "Frontend",
+      "clientId": "web",
+      "name": "Web",
       "enabled": true,
       "protocol": "openid-connect",
-
       "publicClient": true,
       "directAccessGrantsEnabled": false,
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,
-
       "redirectUris": [
-        "https://app.plyglo.com/*",
+        "https://study.plyglo.com/auth/callback"
+      ],
+      "webOrigins": [
+        "https://study.plyglo.com"
+      ],
+      "attributes": {
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "https://study.plyglo.com/*"
+      }
+    },
+    {
+      "clientId": "native",
+      "name": "Native",
+      "enabled": true,
+      "protocol": "openid-connect",
+      "publicClient": true,
+      "directAccessGrantsEnabled": false,
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "redirectUris": [
         "com.poliglotim.app:/callback"
       ],
-
-      "webOrigins": [
-        "https://app.plyglo.com"
-      ],
-
       "attributes": {
-        "post.logout.redirect.uris": "https://app.plyglo.com/* com.poliglotim.app:/callback"
+        "pkce.code.challenge.method": "S256",
+        "post.logout.redirect.uris": "com.poliglotim.app:/callback"
       }
     }
   ],
-
   "users": [
     {
       "username": "student1",
@@ -70,7 +79,9 @@
           "temporary": false
         }
       ],
-      "realmRoles": ["student"]
+      "realmRoles": [
+        "student"
+      ]
     },
     {
       "username": "teacher1",
@@ -86,7 +97,9 @@
           "temporary": false
         }
       ],
-      "realmRoles": ["teacher"]
+      "realmRoles": [
+        "teacher"
+      ]
     },
     {
       "username": "admin1",
@@ -102,7 +115,9 @@
           "temporary": false
         }
       ],
-      "realmRoles": ["admin"]
+      "realmRoles": [
+        "admin"
+      ]
     }
   ]
 }

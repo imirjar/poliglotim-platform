@@ -26,11 +26,7 @@ services:
     restart: always
     environment:
       - API_BASE_URL=${API_BASE_URL}
-      - API_UPSTREAM_PATH=${API_UPSTREAM_PATH:-}
       - AUTH_BASE_URL=${AUTH_BASE_URL}
-      - AUTH_UPSTREAM_PATH=${AUTH_UPSTREAM_PATH}
-      - KEYCLOAK_REALM=${KEYCLOAK_REALM}
-      - KEYCLOAK_CLIENT_ID=${KEYCLOAK_CLIENT_ID}
     depends_on:
       - courses
       - keycloak
