@@ -22,7 +22,7 @@ services:
       - platform-network
 
   app:
-    image: ghcr.io/imirjar/poliglotim-app:latest
+    image: ghcr.io/imirjar/plyglo-study:latest
     restart: always
     environment:
       - API_BASE_URL=${API_BASE_URL}
@@ -34,7 +34,7 @@ services:
       - platform-network
 
   site:
-    image: ghcr.io/imirjar/poliglotim-site:latest
+    image: ghcr.io/imirjar/plyglo-website:latest
     restart: always
     networks:
       - platform-network
