@@ -1,43 +1,4 @@
 services:
-  traefik:
-    image: traefik:v3
-    container_name: traefik
-    restart: always
-    command:
-      - --providers.file.filename=/etc/traefik/dynamic.yml
-      - --providers.file.watch=true
-      - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
-      - --certificatesresolvers.letsencrypt.acme.email=${LETSENCRYPT_EMAIL}
-      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
-      - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
-      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
-    ports:
-      - "80:80"
-      - "443:443"
-    volumes:
-      - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
-      - ./traefik/letsencrypt:/letsencrypt
-    networks:
-      - platform-network
-
-  app:
-    image: ghcr.io/imirjar/plyglo-study:latest
-    restart: always
-    environment:
-      - API_BASE_URL=${API_BASE_URL}
-      - AUTH_BASE_URL=${AUTH_BASE_URL}
-    depends_on:
-      - courses
-      - keycloak
-    networks:
-      - platform-network
-
-  site:
-    image: ghcr.io/imirjar/plyglo-website:latest
-    restart: always
-    networks:
-      - platform-network
 
   courses:
     image: ghcr.io/imirjar/poliglotim-api:latest
@@ -46,29 +7,13 @@ services:
     environment:
       PORT: "6060"
       DB_CONN: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}
+    ports:
+      - "6060:6060"
     networks:
       - platform-network
     depends_on:
       postgres:
         condition: service_healthy
-
-  keycloak:
-    image: quay.io/keycloak/keycloak:latest
-    container_name: keycloak
-    restart: unless-stopped
-    command:
-      - start-dev
-      - --import-realm
-    environment:
-      KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME}
-      KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
-      KC_PROXY_HEADERS: xforwarded
-      KC_HOSTNAME: ${AUTH_ORIGIN}
-    volumes:
-      - ./keycloak/import:/opt/keycloak/data/import
-      - ./keycloak/themes:/opt/keycloak/themes:ro
-    networks:
-      - platform-network
 
   postgres:
     image: postgres:17
@@ -83,6 +28,8 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+    ports:
+      - "5432:5432"
     volumes:
       - ${S3_SQL_DUMP}:/docker-entrypoint-initdb.d/dump.sql
     networks:
