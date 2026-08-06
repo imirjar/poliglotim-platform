@@ -1,41 +1,57 @@
 services:
-  traefik:
-    image: traefik:v3
-    container_name: traefik
-    restart: always
-    command:
-      - --providers.file.filename=/etc/traefik/dynamic.yml
-      - --providers.file.watch=true
-      - --entrypoints.web.address=:80
-      - --entrypoints.websecure.address=:443
-      - --certificatesresolvers.letsencrypt.acme.email=${LETSENCRYPT_EMAIL}
-      - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
-      - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
-      - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+  # traefik:
+  #   image: traefik:v3
+  #   container_name: traefik
+  #   restart: always
+  #   command:
+  #     - --providers.file.filename=/etc/traefik/dynamic.yml
+  #     - --providers.file.watch=true
+  #     - --entrypoints.web.address=:80
+  #     - --entrypoints.websecure.address=:443
+  #     - --certificatesresolvers.letsencrypt.acme.email=${LETSENCRYPT_EMAIL}
+  #     - --certificatesresolvers.letsencrypt.acme.storage=/letsencrypt/acme.json
+  #     - --certificatesresolvers.letsencrypt.acme.httpchallenge=true
+  #     - --certificatesresolvers.letsencrypt.acme.httpchallenge.entrypoint=web
+  #   ports:
+  #     - "80:80"
+  #     - "443:443"
+  #   volumes:
+  #     - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
+  #     - ./traefik/letsencrypt:/letsencrypt
+  #   networks:
+  #     - platform-network
+
+  site:
+    image: ghcr.io/imirjar/plyglo-website:latest
+    volumes:
+      - plyglo-website:/app/dist
+    restart: "no"  # run once for volume only
+    
+  app:
+    image: ghcr.io/imirjar/plyglo-study:latest
+    volumes:
+      - plyglo-app:/app/build/web
+    restart: "no"  # run once for volume only
+
+  caddy:
+    image: caddy:2-alpine
+    container_name: caddy
+    restart: unless-stopped
+    depends_on:
+      app:
+        condition: service_completed_successfully
+      site:
+        condition: service_completed_successfully
+
     ports:
       - "80:80"
       - "443:443"
     volumes:
-      - ./traefik/dynamic.yml:/etc/traefik/dynamic.yml:ro
-      - ./traefik/letsencrypt:/letsencrypt
-    networks:
-      - platform-network
-
-  app:
-    image: ghcr.io/imirjar/plyglo-study:latest
-    restart: always
-    environment:
-      - API_BASE_URL=${API_BASE_URL}
-      - AUTH_BASE_URL=${AUTH_BASE_URL}
-    depends_on:
-      - courses
-      - keycloak
-    networks:
-      - platform-network
-
-  site:
-    image: ghcr.io/imirjar/plyglo-website:latest
-    restart: always
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - plyglo-website:/usr/share/caddy/website:ro
+      - plyglo-app:/usr/share/caddy/app:ro
+      - caddy_data:/data
+      - caddy_config:/config
     networks:
       - platform-network
 
@@ -63,7 +79,10 @@ services:
       KC_BOOTSTRAP_ADMIN_USERNAME: ${KEYCLOAK_ADMIN_USERNAME}
       KC_BOOTSTRAP_ADMIN_PASSWORD: ${KEYCLOAK_ADMIN_PASSWORD}
       KC_PROXY_HEADERS: xforwarded
-      KC_HOSTNAME: ${AUTH_ORIGIN}
+      KC_HOSTNAME: auth.plyglo.com
+      KC_HOSTNAME_STRICT: "false"
+      KC_HTTP_ENABLED: "true"
+      KC_PROXY: edge
     volumes:
       - ./keycloak/import:/opt/keycloak/data/import
       - ./keycloak/themes:/opt/keycloak/themes:ro
@@ -85,9 +104,19 @@ services:
       retries: 10
     volumes:
       - ${S3_SQL_DUMP}:/docker-entrypoint-initdb.d/dump.sql
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
     networks:
       - platform-network
 
 networks:
   platform-network:
     driver: bridge
+
+volumes:
+  plyglo-website:
+  plyglo-app:
+  caddy_data:
+  caddy_config:
+  postgres_data:

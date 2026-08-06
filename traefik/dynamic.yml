@@ -6,7 +6,7 @@ http:
         - websecure
       tls:
         certResolver: letsencrypt
-      service: site
+      service: caddy
 
     app:
       rule: Host(`study.plyglo.com`)
@@ -14,7 +14,7 @@ http:
         - websecure
       tls:
         certResolver: letsencrypt
-      service: app
+      service: caddy
 
     api:
       rule: Host(`api.plyglo.com`)
@@ -33,15 +33,11 @@ http:
       service: auth
 
   services:
-    site:
-      loadBalancer:
-        servers:
-          - url: http://site:80
 
-    app:
+    caddy:
       loadBalancer:
         servers:
-          - url: http://app:80
+          - url: http://caddy:80
 
     api:
       loadBalancer:
