@@ -32,10 +32,6 @@ services:
   site:
     image: ghcr.io/imirjar/plyglo-website:latest
     platform: linux/amd64
-    # volumes:
-    #   - plyglo-website:/app/dist
-    # ports: # Я убрал, так как через Traefik доступ идет иначе, но можно оставить для теста
-    #   - "81:80"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.site.rule=Host(`plyglo.com`)"
@@ -47,10 +43,6 @@ services:
   app:
     image: ghcr.io/imirjar/plyglo-study:latest
     platform: linux/amd64
-    # volumes:
-    #   - plyglo-app:/app/build/web
-    # ports: # Я убрал, так как через Traefik доступ идет иначе
-    #   - "82:80"
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.app.rule=Host(`study.plyglo.com`)"
@@ -59,11 +51,11 @@ services:
     networks:
       - platform-network
 
+
 networks:
   platform-network:
     driver: bridge
 
 volumes:
-  postgres_data:
   plyglo-website:
   plyglo-app:
